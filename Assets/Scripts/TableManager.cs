@@ -12,31 +12,38 @@ public class TableManager : MonoBehaviour
     public static TableManager Instance {
         get
         {
+            if (!m_Instance) m_Instance = FindObjectOfType<TableManager>();
+            if (!m_Instance) m_Instance = new TableManager();
             return m_Instance;
+        }
+        set
+        {
+            if (!m_Instance)
+            {
+                m_Instance = value;
+            }
+            else if(m_Instance != value)
+            {
+                Debug.LogWarning("Too many instances of table manager");
+                Destroy(value.gameObject);
+            }
         }
     }
     private void Awake()
     {
-        if (m_Instance != null)
-        {
-            Debug.LogWarning("Too many instances of table manager");
-            Destroy(gameObject);
-        }
-        else
-        {
-            m_Instance = this;
-        }
+        Instance = this;
     }
 
-    public Transform GetChair()
+    public Table GetTable()
     {
-        Transform chair = null;
-        while (chair == null)
+        if (m_Tables.Count < 0) return null;
+        Table table = null;
+        while (table == null || table.IsTaken() == true)
         {
-            chair = m_Tables[Random.Range(0, m_Tables.Count - 1)].GetFreeChair();
+            table = m_Tables[Random.Range(0, m_Tables.Count - 1)];
         }
 
-        return chair;
+        return table;
     }
 
     public void AddTable(Table pTable)
