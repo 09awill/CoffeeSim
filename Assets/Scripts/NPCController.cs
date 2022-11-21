@@ -7,6 +7,7 @@ public class NPCController : MonoBehaviour
 {
     [SerializeField] private NavMeshAgent m_NavMeshAgent = null;
     [SerializeField] private Transform m_TargetTransform;
+    [SerializeField] private float m_EatTime = 1f;
     private TableState m_TableState = TableState.NotAssignedTable;
     private Table m_TargetTable;
     private bool m_CoffeeOrder = false;
@@ -29,7 +30,7 @@ public class NPCController : MonoBehaviour
         if (m_TableState == TableState.GettingToTable)
         {
             float distance = (m_NavMeshAgent.destination - transform.position).magnitude;
-            if (distance < 0.1f)
+            if (distance < 2f)
             {
                 m_TableState = TableState.AtTable;
                 StartCoroutine(GetOrderCoroutine());
@@ -44,12 +45,24 @@ public class NPCController : MonoBehaviour
 
     public void GiveOrder()
     {
+        StartCoroutine(Eat());
+    }
+    private IEnumerator Eat()
+    {
+        yield return new WaitForSeconds(m_EatTime);
         m_CoffeeOrder = false;
+        m_TableState = TableState.FinishedAtTable;
+        m_TargetTransform.position = TableManager.Instance.GetExit().position;
+    }
+    public bool GetFinished()
+    {
+        return m_TableState == TableState.FinishedAtTable;
     }
     private IEnumerator GetOrderCoroutine()
     {
         yield return new WaitForSeconds(5);
         m_CoffeeOrder = true;
+        m_TableState = TableState.Eating;
         yield return null;
     }
 
@@ -58,6 +71,7 @@ public class NPCController : MonoBehaviour
         NotAssignedTable,
         GettingToTable,
         AtTable,
+        Eating,
         FinishedAtTable,
     };
 }

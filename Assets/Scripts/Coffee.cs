@@ -4,15 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Coffee : PickupableObject
+public class Coffee : Consumable
 {
-    public override PickupableObject Pickup()
+    [SerializeField] GameObject m_InitialModel;
+    [SerializeField] GameObject m_ConsumedModel;
+    public override void Consume()
     {
-        return this;
-    }
-
-    public override PickupableObject Place()
-    {
-        return this;
+        m_InitialModel.SetActive(false);
+        m_ConsumedModel.SetActive(true);
     }
 }

@@ -18,14 +18,13 @@ public class Countertop : MonoBehaviour, IAcceptItem
         m_HeldItem = pObject;
         pObject.transform.position = m_ItemLocation.position;
         pObject.transform.rotation = m_ItemLocation.rotation;
-        pObject.AddComponent<FixedJoint>().connectedBody = m_RB;
+        pObject.transform.parent = transform;
         return true;
     }
 
     public PickupableObject PickupItem()
     {
         if (!m_HeldItem) return null;
-        Destroy(m_HeldItem.GetComponent<FixedJoint>());
         PickupableObject item = m_HeldItem;
         m_HeldItem = null;
         return item;

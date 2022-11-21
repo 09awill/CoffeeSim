@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 
 public class TableManager : MonoBehaviour
 {
+    [SerializeField] private Transform m_Exit;
     private static TableManager m_Instance;
     private List<Table> m_Tables = new List<Table>();
 
@@ -44,6 +45,10 @@ public class TableManager : MonoBehaviour
         }
 
         return table;
+    }
+    public Transform GetExit()
+    {
+        return m_Exit;
     }
 
     public void AddTable(Table pTable)

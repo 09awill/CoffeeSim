@@ -53,14 +53,6 @@ public class PlayerInteract : MonoBehaviour
                 bool placed = itemInventory.PlaceItem(m_HeldObject);
                 if (placed)
                 {
-                    FixedJoint[] joints = m_HeldObject.GetComponents<FixedJoint>();
-                    foreach (FixedJoint joint in joints)
-                    {
-                        if (joint.connectedBody == m_RB)
-                        {
-                            Destroy(joint);
-                        }
-                    }
                     m_HeldObject = null;
                 }
             }
@@ -72,7 +64,7 @@ public class PlayerInteract : MonoBehaviour
                 
                 m_HeldObject = pickupable.Pickup();
                 m_HeldObject.transform.position = transform.position;
-                m_HeldObject.AddComponent<FixedJoint>().connectedBody = m_RB;
+                m_HeldObject.transform.parent = transform;
             }
         }
     }

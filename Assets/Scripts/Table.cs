@@ -43,7 +43,7 @@ public class Table : MonoBehaviour, IAcceptItem
         m_HeldObjects.Add(pObject);
         pObject.transform.position = m_HeldItemsLocation.position;
         pObject.transform.rotation = m_HeldItemsLocation.rotation;
-        pObject.AddComponent<FixedJoint>().connectedBody = m_RB;
+        pObject.transform.parent = transform;
         return true;
     }
 
@@ -51,10 +51,18 @@ public class Table : MonoBehaviour, IAcceptItem
     {
         int count = m_HeldObjects.Count;
         if (count < 1) return null;
-        Destroy(m_HeldObjects[count - 1].GetComponent<FixedJoint>());
-        PickupableObject item = m_HeldObjects[count];
+        PickupableObject item = m_HeldObjects[count - 1];
         m_HeldObjects.Remove(item);
         return item;
+    }
+    private Consumable GetFirstConsumablePlaced()
+    {
+        foreach (PickupableObject obj in m_HeldObjects)
+        {
+            Consumable consumable = obj as Consumable;
+            if(consumable != null) return consumable;
+        }
+        return null;
     }
 
     private void Update()
@@ -65,9 +73,15 @@ public class Table : MonoBehaviour, IAcceptItem
             {
                 if (m_HeldObjects.Count > 0)
                 {
-                    m_HeldObjects[0].gameObject.SetActive(false);
-                    m_Chairs[i].NPC.GiveOrder();
+                    m_Chairs[i].GiveOrder(GetFirstConsumablePlaced());
+                    m_HeldObjects.RemoveAt(0);
                 }
+            } else if(m_Chairs[i].NPC && m_Chairs[i].NPC.GetFinished())
+            {
+                m_HeldObjects.Add(m_Chairs[i].TakePlate());
+                Consumable consumable = m_HeldObjects[m_HeldObjects.Count - 1] as Consumable;
+                consumable.Consume();
+                m_Chairs[i].ClearUpSeat();
             }
         }
     }
@@ -77,5 +91,22 @@ public class Table : MonoBehaviour, IAcceptItem
         public bool Available;
         public Transform Transform;
         public NPCController NPC;
+        public Consumable Order;
+        public void ClearUpSeat()
+        {
+            Available = true;
+            NPC = null;
+        }
+        public PickupableObject TakePlate()
+        {
+            PickupableObject obj = Order;
+            Order = null;
+            return obj;
+        }
+        public void GiveOrder(Consumable pOrder)
+        {
+            Order = pOrder;
+            NPC.GiveOrder();
+        }
     }
 }
