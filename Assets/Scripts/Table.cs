@@ -5,13 +5,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Table : MonoBehaviour, IAcceptItem
+public class Table : Inventory
 {
     [SerializeField] private Chair[] m_Chairs;
-    [SerializeField] private Transform m_HeldItemsLocation;
     [SerializeField] private Rigidbody m_RB;
     private bool m_Taken = false;
-    private List<PickupableObject> m_HeldObjects = new List<PickupableObject>();
     private void Awake()
     {
         if (!m_RB) m_RB = GetComponent<Rigidbody>();
@@ -37,30 +35,12 @@ public class Table : MonoBehaviour, IAcceptItem
 
         return chair;
     }
-
-    public bool PlaceItem(PickupableObject pObject)
+    private ConsumableContainer GetFirstConsumableContainerPlaced()
     {
-        m_HeldObjects.Add(pObject);
-        pObject.transform.position = m_HeldItemsLocation.position;
-        pObject.transform.rotation = m_HeldItemsLocation.rotation;
-        pObject.transform.parent = transform;
-        return true;
-    }
-
-    public PickupableObject PickupItem()
-    {
-        int count = m_HeldObjects.Count;
-        if (count < 1) return null;
-        PickupableObject item = m_HeldObjects[count - 1];
-        m_HeldObjects.Remove(item);
-        return item;
-    }
-    private Consumable GetFirstConsumablePlaced()
-    {
-        foreach (PickupableObject obj in m_HeldObjects)
+        foreach (PickupableObject obj in m_HeldItems)
         {
-            Consumable consumable = obj as Consumable;
-            if(consumable != null) return consumable;
+            ConsumableContainer consumableContainer = obj as ConsumableContainer;
+            if(consumableContainer != null) return consumableContainer;
         }
         return null;
     }
@@ -71,15 +51,15 @@ public class Table : MonoBehaviour, IAcceptItem
         {
             if (m_Chairs[i].NPC && m_Chairs[i].NPC.GetOrder())
             {
-                if (m_HeldObjects.Count > 0)
+                if (m_HeldItems.Count > 0)
                 {
-                    m_Chairs[i].GiveOrder(GetFirstConsumablePlaced());
-                    m_HeldObjects.RemoveAt(0);
+                    m_Chairs[i].GiveOrder(GetFirstConsumableContainerPlaced());
+                    m_HeldItems.RemoveAt(0);
                 }
             } else if(m_Chairs[i].NPC && m_Chairs[i].NPC.GetFinished())
             {
-                m_HeldObjects.Add(m_Chairs[i].TakePlate());
-                Consumable consumable = m_HeldObjects[m_HeldObjects.Count - 1] as Consumable;
+                m_HeldItems.Add(m_Chairs[i].TakePlate());
+                ConsumableContainer consumable = m_HeldItems[m_HeldItems.Count - 1] as ConsumableContainer;
                 consumable.Consume();
                 m_Chairs[i].ClearUpSeat();
             }
@@ -91,7 +71,7 @@ public class Table : MonoBehaviour, IAcceptItem
         public bool Available;
         public Transform Transform;
         public NPCController NPC;
-        public Consumable Order;
+        public ConsumableContainer Order;
         public void ClearUpSeat()
         {
             Available = true;
@@ -103,7 +83,7 @@ public class Table : MonoBehaviour, IAcceptItem
             Order = null;
             return obj;
         }
-        public void GiveOrder(Consumable pOrder)
+        public void GiveOrder(ConsumableContainer pOrder)
         {
             Order = pOrder;
             NPC.GiveOrder();

@@ -19,11 +19,15 @@ public class NPCController : MonoBehaviour
 
     private void Start()
     {
+        GetPlace();
+    }
+
+    private void GetPlace()
+    {
         m_TargetTable = TableManager.Instance.GetTable();
         m_TargetTransform.position = m_TargetTable.GetFreeChair(this).transform.position;
         m_TableState = TableState.GettingToTable;
     }
-
     private void Update()
     {
         m_NavMeshAgent.destination = m_TargetTransform.position;
@@ -34,6 +38,15 @@ public class NPCController : MonoBehaviour
             {
                 m_TableState = TableState.AtTable;
                 StartCoroutine(GetOrderCoroutine());
+            }
+        }
+        if (m_TableState == TableState.FinishedAtTable)
+        {
+            float distance = (m_NavMeshAgent.destination - transform.position).magnitude;
+            if (distance < 2f)
+            {
+                m_TableState = TableState.NotAssignedTable;
+                GetPlace();
             }
         }
     }

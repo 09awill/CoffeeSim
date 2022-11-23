@@ -7,9 +7,13 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody m_RB;
-    [SerializeField] private float m_Speed = 10f;
+    [SerializeField] private CharacterController m_CharacterController;
+    [SerializeField] private float m_Speed = 5f;
+    [SerializeField] private bool m_TurnSmoothly = true;
+    [SerializeField] private float m_TurnSmoothTime = 0.1f;
     private Vector2 m_Movement;
     private bool m_Interacting = false;
+    private float m_TurnSmoothVelocity;
     
     private void Awake()
     {
@@ -36,13 +40,16 @@ public class PlayerMovement : MonoBehaviour
     {
         if (m_Interacting)
         {
-            m_RB.velocity = Vector3.zero;
-            m_RB.angularVelocity = Vector3.zero;
+            m_Movement = Vector2.zero;
         }
-        else
-        {
-            m_RB.AddForce(new Vector3(m_Movement.x * m_Speed, 0, m_Movement.y * m_Speed));
-        }
+        if (m_Movement.magnitude < 0.1f) return;
+
+        float targetAngle = Mathf.Atan2(m_Movement.x, m_Movement.y) * Mathf.Rad2Deg;
+        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref m_TurnSmoothVelocity, m_TurnSmoothTime);
+        transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+        m_CharacterController.Move(moveDir * m_Speed * Time.deltaTime);
+
     }
     
 }

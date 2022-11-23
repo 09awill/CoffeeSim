@@ -13,6 +13,7 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private float m_InteractionPointRadius = 0.5f;
     [SerializeField] private LayerMask m_InteractableMask;
     [SerializeField] private Rigidbody m_RB;
+    [SerializeField] private Transform m_HeldItemLocation;
     private readonly Collider[] m_Colliders = new Collider[3];
     private int m_numFound;
     private Collider m_InteractingObject = null;
@@ -28,10 +29,10 @@ public class PlayerInteract : MonoBehaviour
         if (pContext.performed)
         {
             if (m_numFound <= 0) return;
-            var interactable = m_Colliders[0].GetComponent<IInteractable>();
+            var interactable = GetClosestInteractable();
             if (interactable == null) return;
-            m_InteractingObject = m_Colliders[0];
-            interactable.StartInteract();
+            m_InteractingObject = interactable;
+            interactable.GetComponent<IInteractable>().StartInteract();
         } else if (pContext.canceled)
         {
             if (m_InteractingObject == null) return;
@@ -48,7 +49,7 @@ public class PlayerInteract : MonoBehaviour
             if (m_HeldObject)
             {
                 if (m_numFound <= 0) return;
-                IAcceptItem itemInventory = m_Colliders[0].GetComponent<IAcceptItem>();
+                Inventory itemInventory = GetClosestInventory();
                 if (itemInventory == null) return;
                 bool placed = itemInventory.PlaceItem(m_HeldObject);
                 if (placed)
@@ -59,11 +60,10 @@ public class PlayerInteract : MonoBehaviour
             else
             {
                 if (m_numFound <= 0) return;
-                var pickupable = m_Colliders[0].GetComponent<IAcceptItem>()?.PickupItem();
+                var pickupable = GetClosestInventory()?.PickupItem();
                 if (!pickupable) return;
-                
-                m_HeldObject = pickupable.Pickup();
-                m_HeldObject.transform.position = transform.position;
+                m_HeldObject = pickupable;
+                m_HeldObject.transform.position = m_HeldItemLocation.position;
                 m_HeldObject.transform.parent = transform;
             }
         }
@@ -78,6 +78,43 @@ public class PlayerInteract : MonoBehaviour
             m_InteractingObject.GetComponent<IInteractable>().StopInteract();
             m_InteractingObject = null;
         }
+    }
+
+    private Inventory GetClosestInventory()
+    {
+        Inventory tMin = null;
+        float minDist = Mathf.Infinity;
+        Vector3 currentPos = transform.position;
+        foreach (Collider c in m_Colliders)
+        {
+            float dist = Vector3.Distance(c.gameObject.transform.position, currentPos);
+            if (dist < minDist)
+            {
+                Inventory item = c.gameObject.GetComponent<Inventory>();
+                if (item == null) continue;
+                tMin = item;
+                minDist = dist;
+            }
+        }
+        return tMin;
+    }
+    private Collider GetClosestInteractable()
+    {
+        Collider tMin = null;
+        float minDist = Mathf.Infinity;
+        Vector3 currentPos = transform.position;
+        foreach (Collider c in m_Colliders)
+        {
+            float dist = Vector3.Distance(c.gameObject.transform.position, currentPos);
+            if (dist < minDist)
+            {
+                IInteractable item = c.gameObject.GetComponent<IInteractable>();
+                if (item == null) continue;
+                tMin = c;
+                minDist = dist;
+            }
+        }
+        return tMin;
     }
 
     private void OnDrawGizmos()

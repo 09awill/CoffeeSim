@@ -6,28 +6,29 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-public class GetCoffeeObject : MonoBehaviour, IInteractable, IAcceptItem
+public class CoffeeMachine : Inventory, IInteractable
 {
     [SerializeField] private float m_InteractTime = 10f;
-    [SerializeField] private PickupableObject m_Coffee;
-    [SerializeField] private Transform m_CoffeeLocation;
+    [SerializeField] private Consumable m_Coffee;
     [SerializeField] private Rigidbody m_RB;
     
     [SerializeField] private UnityEvent m_OnInteracting;
     [SerializeField] private UnityEvent m_OnInteractCancelled;
     [SerializeField] private UnityEvent m_OnInteracted;
     private Coroutine m_InteractingCoroutine = null;
-    private PickupableObject m_HeldItem;
 
     private void Awake()
     {
         if (!m_RB) m_RB = GetComponent<Rigidbody>();
     }
 
+
     public void StartInteract()
     {
-        if (m_HeldItem) return;
-        if(m_InteractingCoroutine != null) StopCoroutine(m_InteractingCoroutine);
+        if (m_HeldItems.Count < 1) return;
+        ConsumableContainer container = m_HeldItems[0] as ConsumableContainer;
+        if (!container.IsClearAndClean()) return;
+        if (m_InteractingCoroutine != null) StopCoroutine(m_InteractingCoroutine);
         m_InteractingCoroutine = StartCoroutine(Interacting());
         m_OnInteracting.Invoke();
     }
@@ -52,30 +53,22 @@ public class GetCoffeeObject : MonoBehaviour, IInteractable, IAcceptItem
 
     public void OnInteract()
     {
-        print("Finished Interaction");
-        if (m_Coffee)
+        if (!m_Coffee) return;
+        foreach(var item in m_HeldItems)
         {
-            PlaceItem(Instantiate(m_Coffee, m_CoffeeLocation.position, m_CoffeeLocation.rotation));
+            ConsumableContainer container = item as ConsumableContainer;
+            Consumable consumable = Instantiate(m_Coffee, container.gameObject.transform.position, container.gameObject.transform.rotation);
+            container.AddItem(consumable);
         }
-
         m_OnInteracted.Invoke();
     }
-
-    public bool PlaceItem(PickupableObject pObject)
+    public override bool CanHoldObjectType(PickupableObject pObject)
     {
-        if (m_HeldItem) return false;
-        m_HeldItem = pObject;
-        pObject.transform.position = m_CoffeeLocation.position;
-        pObject.transform.rotation = m_CoffeeLocation.rotation;
-        pObject.transform.parent = transform;
+        ConsumableContainer cup = pObject as ConsumableContainer;
+        if (cup == null) return false;
+        if (m_HeldItems.Count <= 0) return true;
+        ConsumableContainer item = m_HeldItems[0] as ConsumableContainer;
+        if (item.IsClearAndClean() != cup.IsClearAndClean()) return false;
         return true;
-    }
-
-    public PickupableObject PickupItem()
-    {
-        if (!m_HeldItem) return null;
-        PickupableObject item = m_HeldItem;
-        m_HeldItem = null;
-        return item;
     }
 }
