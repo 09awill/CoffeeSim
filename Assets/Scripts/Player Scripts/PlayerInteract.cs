@@ -45,7 +45,6 @@ public class PlayerInteract : MonoBehaviour
     {
         if (pContext.performed)
         {
-            Debug.Log("Attempting Pickup");
             if (m_HeldObject)
             {
                 if (m_numFound <= 0) return;

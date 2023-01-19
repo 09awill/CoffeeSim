@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 575019245991185830}
   - component: {fileID: 575019245991185825}
   - component: {fileID: 575019245991185824}
-  - component: {fileID: 575019245991185826}
+  - component: {fileID: 6437936970591139316}
   m_Layer: 6
   m_Name: CupRack
   m_TagString: Untagged
@@ -194,7 +194,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &575019245991185826
+--- !u!114 &6437936970591139316
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -203,7 +203,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 575019245991185829}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddc8ef87c06450b4896d83840abdd64e, type: 3}
+  m_Script: {fileID: 11500000, guid: 503f2a8f3d4e3cd4087e3d5ecaa1aacc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ModelLocations:

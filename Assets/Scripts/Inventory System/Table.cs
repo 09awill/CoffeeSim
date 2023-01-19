@@ -8,11 +8,9 @@ using Random = UnityEngine.Random;
 public class Table : Inventory
 {
     [SerializeField] private Chair[] m_Chairs;
-    [SerializeField] private Rigidbody m_RB;
     private bool m_Taken = false;
     private void Awake()
     {
-        if (!m_RB) m_RB = GetComponent<Rigidbody>();
         TableManager.Instance.AddTable(this);
     }
 

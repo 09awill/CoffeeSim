@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class CupRack : Inventory
+/// <summary>
+/// Item Supplier Class is used to spawn a specified item and store a specified amount. It will instantiate enough items to fill the array containing where the items should go
+/// </summary>
+public class ItemSupplier : Inventory
 {
     [SerializeField] private PickupableObject m_ItemToSupply;
     private void Awake()
@@ -15,9 +17,7 @@ public class CupRack : Inventory
     }
     public override bool CanHoldObjectType(PickupableObject pObject)
     {
-        ConsumableContainer plate = pObject as ConsumableContainer;
-        if (plate == null || !plate.IsClearAndClean()) return false;
-        return true;
+        return pObject != null;
     }
 
 }
