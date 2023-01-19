@@ -31,6 +31,7 @@ public class Table : Inventory
             chair = option.Transform;
             option.Available = false;
             option.NPC = pNPC;
+            m_Taken = true;
         }
 
         return chair;
@@ -49,11 +50,11 @@ public class Table : Inventory
     {
         for (int i = 0; i < m_Chairs.Length; i++)
         {
-            if (m_Chairs[i].NPC && m_Chairs[i].NPC.GetOrder())
+            if (m_Chairs[i].NPC && m_Chairs[i].NPC.GetIsOrdering())
             {
                 if (m_HeldItems.Count > 0)
                 {
-                    m_Chairs[i].GiveOrder(GetFirstConsumableContainerPlaced());
+                    if(!m_Chairs[i].GiveOrder(GetFirstConsumableContainerPlaced())) continue;
                     m_HeldItems.RemoveAt(0);
                 }
             } else if(m_Chairs[i].NPC && m_Chairs[i].NPC.GetFinished())
@@ -83,10 +84,11 @@ public class Table : Inventory
             Order = null;
             return obj;
         }
-        public void GiveOrder(ConsumableContainer pOrder)
+        public bool GiveOrder(ConsumableContainer pOrder)
         {
+            if (!NPC.GiveOrder(pOrder)) return false;
             Order = pOrder;
-            NPC.GiveOrder();
+            return true;
         }
     }
 }

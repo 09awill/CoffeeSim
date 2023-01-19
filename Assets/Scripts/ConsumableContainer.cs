@@ -27,6 +27,15 @@ public class ConsumableContainer : PickupableObject
         pObject.transform.parent = transform;
         return true;
     }
+    public List<SO_Consumable> GetConsumableData()
+    {
+        List<SO_Consumable> consumableData = new List<SO_Consumable>();
+        foreach (Consumable consumable in m_Consumables)
+        {
+            consumableData.Add(consumable.GetConsumableData());
+        }
+        return consumableData;
+    }
     public bool IsFull()
     {
         return m_Consumables.Count > 0;

@@ -69,6 +69,14 @@ public class PlayerInteract : MonoBehaviour
         }
     }
 
+    public void OnStartRound(InputAction.CallbackContext pContext)
+    {
+        if (pContext.performed)
+        {
+            GameManager.Instance.StartRound();
+        }
+    }
+
     private void Update()
     {
         m_numFound = Physics.OverlapSphereNonAlloc(transform.position, m_InteractionPointRadius, m_Colliders,

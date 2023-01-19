@@ -38,10 +38,16 @@ public class TableManager : MonoBehaviour
     public Table GetTable()
     {
         if (m_Tables.Count < 0) return null;
+        bool allTablesTaken = true;
+        foreach (Table t in m_Tables)
+        {
+            if (!t.IsTaken()) allTablesTaken = false;
+        }
+        if (allTablesTaken) return null;
         Table table = null;
         while (table == null || table.IsTaken() == true)
         {
-            table = m_Tables[Random.Range(0, m_Tables.Count - 1)];
+            table = m_Tables[Random.Range(0, m_Tables.Count)];
         }
 
         return table;

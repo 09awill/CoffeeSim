@@ -2,8 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Consumable : PickupableObject
+public class Consumable : PickupableObject
 {
+    [SerializeField] private SO_Consumable m_ConsumableData;
+    private GameObject m_Model;
+    private void Awake()
+    {
+        m_Model = Instantiate(m_ConsumableData.GetInitialModelPrefab(), transform);
+    }
     public override PickupableObject Pickup()
     {
         return this;
@@ -13,5 +19,13 @@ public abstract class Consumable : PickupableObject
     {
         return this;
     }
-    public abstract void Consume();
+    public void Consume()
+    {
+        Destroy(m_Model);
+        m_Model = Instantiate(m_ConsumableData.GetConsumedModelPrefab(), transform);
+    }
+    public SO_Consumable GetConsumableData()
+    {
+        return m_ConsumableData;
+    }
 }
