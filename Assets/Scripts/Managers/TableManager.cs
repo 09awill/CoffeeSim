@@ -41,11 +41,11 @@ public class TableManager : MonoBehaviour
         bool allTablesTaken = true;
         foreach (Table t in m_Tables)
         {
-            if (!t.IsTaken()) allTablesTaken = false;
+            if (!t.IsFull()) allTablesTaken = false;
         }
         if (allTablesTaken) return null;
         Table table = null;
-        while (table == null || table.IsTaken() == true)
+        while (table == null || table.IsFull() == true)
         {
             table = m_Tables[Random.Range(0, m_Tables.Count)];
         }

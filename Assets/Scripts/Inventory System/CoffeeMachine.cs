@@ -8,45 +8,19 @@ using UnityEngine.Events;
 /// Need to adjust this script to be more component based. Currently uses basically the same code as the sink so doesn't need to be two scripts
 /// </summary>
 
-public class CoffeeMachine : Inventory, IInteractable
+public class CoffeeMachine : InteractableInventory, IInteractable
 {
-    [SerializeField] private float m_InteractTime = 10f;
     [SerializeField] private Consumable m_Coffee;
-    
-    [SerializeField] private UnityEvent m_OnInteracting;
-    [SerializeField] private UnityEvent m_OnInteractCancelled;
-    [SerializeField] private UnityEvent m_OnInteracted;
-    private Coroutine m_InteractingCoroutine = null;
 
-    public void StartInteract()
+    public override bool CanStartInteract()
     {
-        if (m_HeldItems.Count < 1) return;
+        if (m_HeldItems.Count < 1) return false;
         ConsumableContainer container = m_HeldItems[0] as ConsumableContainer;
-        if (!container.IsClearAndClean()) return;
-        if (m_InteractingCoroutine != null) StopCoroutine(m_InteractingCoroutine);
-        m_InteractingCoroutine = StartCoroutine(Interacting());
-        m_OnInteracting.Invoke();
+        if (!container.IsClearAndClean()) return false;
+        return base.CanStartInteract();
     }
 
-    public void StopInteract()
-    {
-        if(m_InteractingCoroutine != null) StopCoroutine(m_InteractingCoroutine);
-        m_OnInteractCancelled.Invoke();
-    }
-
-    private IEnumerator Interacting()
-    {
-        float m_InteractingTime = 0;
-        while (m_InteractingTime < m_InteractTime)
-        {
-            m_InteractingTime += Time.deltaTime;
-            yield return null;
-        }
-        OnInteract();
-        yield return null;
-    }
-
-    public void OnInteract()
+    public override void OnInteract()
     {
         if (!m_Coffee) return;
         foreach(var item in m_HeldItems)
@@ -55,7 +29,7 @@ public class CoffeeMachine : Inventory, IInteractable
             Consumable consumable = Instantiate(m_Coffee, container.gameObject.transform.position, container.gameObject.transform.rotation);
             container.AddItem(consumable);
         }
-        m_OnInteracted.Invoke();
+        base.OnInteract();
     }
     public override bool CanHoldObjectType(PickupableObject pObject)
     {

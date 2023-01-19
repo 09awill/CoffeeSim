@@ -4953,7 +4953,7 @@ GameObject:
   - component: {fileID: 1782838444180838789}
   - component: {fileID: 1782838444180838790}
   m_Layer: 6
-  m_Name: GetCoffee
+  m_Name: Coffee Machine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5006,9 +5006,6 @@ MonoBehaviour:
   m_ModelLocations:
   - {fileID: 1782838442665450415}
   m_InteractTime: 2
-  m_Coffee: {fileID: 3585916164204467866, guid: 7fa54efaf0fdd9c4cbe47027178bb6bb,
-    type: 3}
-  m_RB: {fileID: 1782838444180838790}
   m_OnInteracting:
     m_PersistentCalls:
       m_Calls:
@@ -5054,6 +5051,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  m_Coffee: {fileID: 3585916164204467866, guid: 7fa54efaf0fdd9c4cbe47027178bb6bb,
+    type: 3}
 --- !u!54 &1782838444180838790
 Rigidbody:
   m_ObjectHideFlags: 0

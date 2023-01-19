@@ -8,15 +8,19 @@ using Random = UnityEngine.Random;
 public class Table : Inventory
 {
     [SerializeField] private Chair[] m_Chairs;
-    private bool m_Taken = false;
     private void Awake()
     {
         TableManager.Instance.AddTable(this);
     }
 
-    public bool IsTaken()
+    public bool IsFull()
     {
-        return m_Taken;
+        bool isFull = true;
+        foreach (Chair c in m_Chairs)
+        {
+            if (c.Available) isFull = false;
+        }
+        return isFull;
     }
 
     public Transform GetFreeChair(NPCController pNPC)
@@ -29,7 +33,6 @@ public class Table : Inventory
             chair = option.Transform;
             option.Available = false;
             option.NPC = pNPC;
-            m_Taken = true;
         }
 
         return chair;
