@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Controls state of game, Manages the spawning and deletion of NPC's and the round difficulty
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     private static GameManager m_Instance;
@@ -90,6 +92,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(controller.gameObject);
         }
+        m_RoundNumber++;
         m_NPCsInRound = null;
         m_RoundInProgress = false;
     }

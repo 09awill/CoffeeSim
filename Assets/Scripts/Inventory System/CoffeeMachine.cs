@@ -5,39 +5,49 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 /// <summary>
-/// Need to adjust this script to be more component based. Currently uses basically the same code as the sink so doesn't need to be two scripts
+/// Script to add consumable to container on interact
 /// </summary>
-
-public class CoffeeMachine : InteractableInventory, IInteractable
+[RequireComponent(typeof(Inventory))]
+public class CoffeeMachine : BaseInteractable
 {
     [SerializeField] private Consumable m_Coffee;
+    private Inventory m_Inventory;
 
+    private void Awake()
+    {
+        m_Inventory = GetComponent<Inventory>();
+    }
     public override bool CanStartInteract()
     {
-        if (m_HeldItems.Count < 1) return false;
-        ConsumableContainer container = m_HeldItems[0] as ConsumableContainer;
-        if (!container.IsClearAndClean()) return false;
+        List<PickupableObject> items = m_Inventory.GetListOfItems();
+        if (items.Count < 1) return false;
+        bool allContainCoffee = true;
+        foreach (var item in items)
+        {
+            ConsumableContainer container = item as ConsumableContainer;
+            List<SO_Consumable> consumables = container.GetConsumableData();
+            if (!consumables.Contains(m_Coffee.GetConsumableData())) allContainCoffee = false;
+        }
+        if (allContainCoffee) return false;
         return base.CanStartInteract();
     }
 
     public override void OnInteract()
     {
         if (!m_Coffee) return;
-        foreach(var item in m_HeldItems)
+        List<PickupableObject> items = m_Inventory.GetListOfItems();
+        foreach (var item in items)
         {
             ConsumableContainer container = item as ConsumableContainer;
-            Consumable consumable = Instantiate(m_Coffee, container.gameObject.transform.position, container.gameObject.transform.rotation);
-            container.AddItem(consumable);
+            List<SO_Consumable> consumables = container.GetConsumableData();
+            bool shouldFill = false;
+            if (!consumables.Contains(m_Coffee.GetConsumableData())) shouldFill = true;
+            if (shouldFill)
+            {
+                Consumable consumable = Instantiate(m_Coffee, container.gameObject.transform.position, container.gameObject.transform.rotation);
+                container.AddItem(consumable);
+            }
         }
         base.OnInteract();
-    }
-    public override bool CanHoldObjectType(PickupableObject pObject)
-    {
-        ConsumableContainer cup = pObject as ConsumableContainer;
-        if (cup == null) return false;
-        if (m_HeldItems.Count <= 0) return true;
-        ConsumableContainer item = m_HeldItems[0] as ConsumableContainer;
-        if (item.IsClearAndClean() != cup.IsClearAndClean()) return false;
-        return true;
     }
 }

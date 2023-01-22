@@ -6,7 +6,10 @@ using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+/// <summary>
+/// Player interact script allows user to pick up and interact with objects
+/// Runs physics overlaps with nearby objects to detect what to interact or pickup when input is pressed.
+/// </summary>
 public class PlayerInteract : MonoBehaviour
 {
     [SerializeField] private bool m_ShowDebug = false;

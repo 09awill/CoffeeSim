@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+
 /// <summary>
-/// Need to adjust this script to be more component based. Currently uses basically the same code as the sink so doesn't need to be two scripts
+/// Basic interactable script, allows a user to interact and trigger events with a given interact time.
 /// </summary>
 
-public class InteractableInventory : Inventory, IInteractable
+public class BaseInteractable : MonoBehaviour, IInteractable 
 {
     [SerializeField] private float m_InteractTime = 10f;
     [SerializeField] private UnityEvent m_OnInteracting;

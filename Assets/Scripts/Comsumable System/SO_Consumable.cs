@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+/// <summary>
+/// Basic consumable data
+/// </summary>
 [CreateAssetMenu(menuName ="Consumables/Create new consumable")]
 public class SO_Consumable : ScriptableObject
 {

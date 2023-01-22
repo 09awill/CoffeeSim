@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Base script for containing consumables, designed to be used for plates, cups etc.
+/// </summary>
 public class ConsumableContainer : PickupableObject
 {
     public List<Consumable> m_Consumables = new List<Consumable>();

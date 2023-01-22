@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Consumable script designed to be as basic as possible and rely on customisable consumable data to make it easily expandable
+/// </summary>
 public class Consumable : PickupableObject
 {
     [SerializeField] private SO_Consumable m_ConsumableData;

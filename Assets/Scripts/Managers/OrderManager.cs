@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
-
+/// <summary>
+/// Allows a static reference to get a random order
+/// </summary>
 public class OrderManager : MonoBehaviour
 {
     [SerializeField] private List<Consumable> m_Consumables = new List<Consumable>();

@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
-
+/// <summary>
+/// Manager handles a list of tables which allows a static reference to find a place for NPCs
+/// </summary>
 public class TableManager : MonoBehaviour
 {
     [SerializeField] private Transform m_Exit;

@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
-
-public class Table : Inventory
+/// <summary>
+/// Table script controls the state of the table, which chairs are full and which NPC to give consumables to
+/// Might be an idea to seperate Inventory script but would require a rethink around accessing held items on update.
+/// </summary>
+public class Table : Inventory 
 {
     [SerializeField] private Chair[] m_Chairs;
     private void Awake()
@@ -28,7 +31,7 @@ public class Table : Inventory
         Transform chair = null;
         while (chair == null)
         {
-            Chair option = m_Chairs[Random.Range(0, m_Chairs.Length - 1)];
+            Chair option = m_Chairs[Random.Range(0, m_Chairs.Length)];
             if (!option.Available) continue;
             chair = option.Transform;
             option.Available = false;

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// Inventory script allows user to place any object, can be inherited and overriden to only allow specific items.
+/// </summary>
 public class Inventory: MonoBehaviour
 {
     [SerializeField] protected Transform[] m_ModelLocations;
@@ -21,6 +23,10 @@ public class Inventory: MonoBehaviour
         m_HeldItems.RemoveAt(0);
         RefreshModel();
         return item;
+    }
+    public List<PickupableObject> GetListOfItems()
+    {
+        return m_HeldItems;
     }
     public virtual bool CanHoldObjectType(PickupableObject pObject)
     {

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+/// <summary>
+/// Script is too big, could potentially seperate into NPC movement controller and NPC order controller
+/// </summary>
 public class NPCController : MonoBehaviour
 {
     [SerializeField] private NavMeshAgent m_NavMeshAgent = null;
@@ -12,7 +15,6 @@ public class NPCController : MonoBehaviour
     private TableState m_TableState = TableState.NotAssignedTable;
     private Table m_TargetTable;
     private List<Consumable> m_CoffeeOrder = null;
-    private bool m_AtTable = false;
     private void Awake()
     {
         if (!m_NavMeshAgent) m_NavMeshAgent = GetComponent<NavMeshAgent>();
@@ -37,7 +39,7 @@ public class NPCController : MonoBehaviour
             Transform chair = m_TargetTable.GetFreeChair(this);
             if (chair == null)
             {
-                            yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1);
                 continue;
             }
             m_TargetTransform.SetPositionAndRotation(chair.position, chair.rotation);
