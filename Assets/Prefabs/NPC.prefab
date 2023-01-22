@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 7500681513839289412}
   - component: {fileID: 7500681513839289419}
   - component: {fileID: 7500681513839289416}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: NPC
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -95,7 +95,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 7500681513839289437}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.01
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -123,6 +123,7 @@ MonoBehaviour:
   m_NavMeshAgent: {fileID: 7500681513839289419}
   m_TargetTransform: {fileID: 0}
   m_EatTime: 1
+  m_DrawDebug: 0
 --- !u!1001 &8114972287958188393
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -133,6 +134,10 @@ PrefabInstance:
     - target: {fileID: 1645872946987862, guid: 9b88eb630e9e15a4f950eae741685374, type: 3}
       propertyPath: m_Name
       value: SM_Bean_Town_Female_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1645872946987862, guid: 9b88eb630e9e15a4f950eae741685374, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4182031405557140, guid: 9b88eb630e9e15a4f950eae741685374, type: 3}
       propertyPath: m_RootOrder

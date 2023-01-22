@@ -12,6 +12,7 @@ public class NPCController : MonoBehaviour
     [SerializeField] private NavMeshAgent m_NavMeshAgent = null;
     [SerializeField] private Transform m_TargetTransform;
     [SerializeField] private float m_EatTime = 1f;
+    [SerializeField] private bool m_DrawDebug = false;
     private TableState m_TableState = TableState.NotAssignedTable;
     private Table m_TargetTable;
     private List<Consumable> m_CoffeeOrder = null;
@@ -142,7 +143,7 @@ public class NPCController : MonoBehaviour
     };
     private void OnDrawGizmos()
     {
-        Gizmos.DrawLine(transform.position, transform.position + m_TargetTransform.forward);
+        if(m_DrawDebug)Gizmos.DrawLine(transform.position, transform.position + m_TargetTransform.forward);
     }
     private void OnDestroy()
     {
