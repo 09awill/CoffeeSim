@@ -1,17 +1,37 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 /// <summary>
-/// Inventory script allows user to place any object, can be inherited and overriden to only allow specific items.
+/// Inventory script allows user to place any object
 /// </summary>
 public class Inventory: MonoBehaviour
 {
     [SerializeField] protected Transform[] m_ModelLocations;
     protected List<PickupableObject> m_HeldItems = new List<PickupableObject>();
+
+    private delegate bool ItemFilter(PickupableObject pObject);
+    private List<ItemFilter> m_Filters = new List<ItemFilter>();
+
+    /// <summary>
+    /// Adds Inventory Filter to delegate list
+    /// </summary>
+    /// <param name="pMethod">Method With Pickupable Object as a parameter and a boolean return type</param>
+    public void AddFilter(Func<PickupableObject, bool> pMethod)
+    {
+        ItemFilter filter = new ItemFilter(pMethod);
+        m_Filters.Add(filter);
+    }
     public bool PlaceItem(PickupableObject pObject)
     {
         if (m_HeldItems.Count >= m_ModelLocations.Length) return false;
-        if (!CanHoldObjectType(pObject)) return false;
+        if (pObject == null) return false;
+        if (m_Filters.Count > 0)
+        {
+            bool fitsFilters = m_Filters.Where(filter => filter.Invoke(pObject) == true).Any();
+            if (!fitsFilters) return false;
+        }
         m_HeldItems.Add(pObject);
         RefreshModel();
         return true;
@@ -28,12 +48,10 @@ public class Inventory: MonoBehaviour
     {
         return m_HeldItems;
     }
-    public virtual bool CanHoldObjectType(PickupableObject pObject)
+    public int GetCapacity()
     {
-        if (pObject == null) return false;
-        return true;
+        return m_ModelLocations.Length;
     }
-
     protected void RefreshModel()
     {
         for (int i = 0; i < m_HeldItems.Count; i++)
