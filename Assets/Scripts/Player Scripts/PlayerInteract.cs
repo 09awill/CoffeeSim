@@ -35,11 +35,11 @@ public class PlayerInteract : MonoBehaviour
             var interactable = GetClosestInteractable();
             if (interactable == null) return;
             m_InteractingObject = interactable;
-            interactable.GetComponent<IInteractable>().StartInteract();
+            interactable.GetComponent<Interactable>().StartInteract();
         } else if (pContext.canceled)
         {
             if (m_InteractingObject == null) return;
-            m_InteractingObject.GetComponent<IInteractable>().StopInteract();
+            m_InteractingObject.GetComponent<Interactable>().StopInteract();
             m_InteractingObject = null;
         }
     }
@@ -85,7 +85,7 @@ public class PlayerInteract : MonoBehaviour
             m_InteractableMask);
         if (m_InteractingObject && !m_Colliders.Contains(m_InteractingObject))
         {
-            m_InteractingObject.GetComponent<IInteractable>().StopInteract();
+            m_InteractingObject.GetComponent<Interactable>().StopInteract();
             m_InteractingObject = null;
         }
     }
@@ -118,7 +118,7 @@ public class PlayerInteract : MonoBehaviour
             float dist = Vector3.Distance(c.gameObject.transform.position, currentPos);
             if (dist < minDist)
             {
-                IInteractable item = c.gameObject.GetComponent<IInteractable>();
+                Interactable item = c.gameObject.GetComponent<Interactable>();
                 if (item == null) continue;
                 tMin = c;
                 minDist = dist;
