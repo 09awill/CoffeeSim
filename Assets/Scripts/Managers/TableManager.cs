@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 /// <summary>
@@ -39,20 +40,8 @@ public class TableManager : MonoBehaviour
 
     public Table GetTable()
     {
-        if (m_Tables.Count < 0) return null;
-        bool allTablesTaken = true;
-        foreach (Table t in m_Tables)
-        {
-            if (!t.IsFull()) allTablesTaken = false;
-        }
-        if (allTablesTaken) return null;
-        Table table = null;
-        while (table == null || table.IsFull() == true)
-        {
-            table = m_Tables[Random.Range(0, m_Tables.Count)];
-        }
-
-        return table;
+        var free = m_Tables.Where(t => !t.IsFull());
+        return free.Any() ? free.ElementAt(Random.Range(0, m_Tables.Count)) : null;
     }
     public Transform GetExit()
     {
