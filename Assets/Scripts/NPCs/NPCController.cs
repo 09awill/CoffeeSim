@@ -10,6 +10,9 @@ using UnityEngine.AI;
 /// </summary>
 public class NPCController : MonoBehaviour
 {
+    public Action OnOrderChanged;
+    public Action OnEating;
+    public Action OnLeavingTable;
     [SerializeField] private NavMeshAgent m_NavMeshAgent = null;
     [SerializeField] private Transform m_TargetTransform;
     [SerializeField] private float m_EatTime = 1f;
@@ -17,6 +20,7 @@ public class NPCController : MonoBehaviour
     private TableState m_TableState = TableState.NotAssignedTable;
     private Table m_TargetTable;
     private List<Consumable> m_CoffeeOrder = null;
+    private ConsumableContainer m_GivenOrder = null;
     private void Awake()
     {
         if (!m_NavMeshAgent) m_NavMeshAgent = GetComponent<NavMeshAgent>();
@@ -38,7 +42,7 @@ public class NPCController : MonoBehaviour
                 yield return new WaitForSeconds(1);
                 continue;
             }
-            Transform chair = m_TargetTable.GetFreeChair(this);
+            Transform chair = m_TargetTable.SeatNPC(this);
             if (chair == null)
             {
                 yield return new WaitForSeconds(1);
@@ -57,8 +61,6 @@ public class NPCController : MonoBehaviour
             if (HasReachedDestination())
             {
                 m_TableState = TableState.AtTable;
-                //transform.LookAt(transform.position + m_TargetTransform.forward);
-                StartCoroutine(RotateToFace());
                 StartCoroutine(GetOrderCoroutine());
             }
         }
@@ -68,20 +70,15 @@ public class NPCController : MonoBehaviour
             {
                 m_TableState = TableState.NotAssignedTable;
                 gameObject.SetActive(false);
+                return;
             }
         }
-    }
-    private IEnumerator RotateToFace()
-    {
-        var targetRotation = Quaternion.LookRotation(m_TargetTransform.transform.position - transform.position);
-        while (!Quaternion.Equals(transform.rotation, targetRotation))
+        Vector3 lookDirection = HasReachedDestination() ? (m_TargetTransform.forward + m_TargetTransform.position) - transform.position : (transform.position + m_NavMeshAgent.velocity.normalized) - transform.position;
+        if (lookDirection != Vector3.zero)
         {
-            targetRotation = Quaternion.LookRotation((transform.position + m_TargetTransform.transform.forward) - transform.position);
-            // Smoothly rotate towards the target point.
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 2f * Time.deltaTime);
-            yield return null;
+            var targetRotation = Quaternion.LookRotation(lookDirection);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 2f * Time.deltaTime);
         }
-        yield return null;
     }
     public bool HasReachedDestination()
     {
@@ -104,23 +101,39 @@ public class NPCController : MonoBehaviour
 
     public bool GiveOrder(ConsumableContainer pOrder)
     {
+        if (!CheckOrderIsCorrect(pOrder)) return false;
+        m_GivenOrder = pOrder;
+        StartCoroutine(Eat());
+        return true;
+    }
+    public List<Consumable> GetOrder()
+    {
+        return m_CoffeeOrder;
+    }
+    public bool CheckOrderIsCorrect(ConsumableContainer pOrder)
+    {
+        if (m_CoffeeOrder == null) return false;
+        if (pOrder == null) return false;
         if (pOrder.IsDirty()) return false;
         List<SO_Consumable> consumableData = pOrder.GetConsumableData();
-        
         if (m_CoffeeOrder.Count != consumableData.Count) return false;
-        foreach (Consumable c in m_CoffeeOrder)
+        if (m_CoffeeOrder.Where(consumable => !consumableData.Contains(consumable.GetConsumableData())).Any())
         {
-            if (!consumableData.Contains(c.GetConsumableData())) return false;
+            return false;
         }
-        StartCoroutine(Eat());
         return true;
     }
     private IEnumerator Eat()
     {
+        OnEating.Invoke();
         yield return new WaitForSeconds(m_EatTime);
+        m_GivenOrder.Consume();
+        m_GivenOrder = null;
         m_CoffeeOrder = null;
+        OnOrderChanged.Invoke();
         m_TableState = TableState.FinishedAtTable;
         m_TargetTransform.position = TableManager.Instance.GetExit().position;
+        OnLeavingTable.Invoke();
     }
     public bool GetFinished()
     {
@@ -130,6 +143,7 @@ public class NPCController : MonoBehaviour
     {
         yield return new WaitForSeconds(5);
         m_CoffeeOrder = OrderManager.GetOrder();
+        OnOrderChanged.Invoke();
         m_TableState = TableState.Eating;
         yield return null;
     }

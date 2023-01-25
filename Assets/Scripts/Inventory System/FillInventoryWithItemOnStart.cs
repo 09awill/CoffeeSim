@@ -11,10 +11,11 @@ public class FillInventoryWithItemOnStart : MonoBehaviour
     [SerializeField] private PickupableObject m_ItemToSupply;
     private void Awake()
     {
+        if (m_ItemToSupply == null) return;
         Inventory inventory = GetComponent<Inventory>();
         for(int i = 0; i < inventory.GetCapacity(); i++)
         {
-            inventory.PlaceItem(Instantiate(m_ItemToSupply));
+            inventory.TryPlaceItem(Instantiate(m_ItemToSupply));
         }
         enabled = false;
     }

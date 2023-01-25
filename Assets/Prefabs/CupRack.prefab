@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddc8ef87c06450b4896d83840abdd64e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ItemToSupply: {fileID: 6770249656386796008, guid: 048b815ca9668a24b88c56692ee2fb01,
+  m_ItemToSupply: {fileID: 5088943475206265695, guid: 048b815ca9668a24b88c56692ee2fb01,
     type: 3}
 --- !u!114 &7972847286580686130
 MonoBehaviour:

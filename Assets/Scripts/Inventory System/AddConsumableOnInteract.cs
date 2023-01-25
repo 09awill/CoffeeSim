@@ -33,7 +33,7 @@ public class AddConsumableOnInteract : MonoBehaviour
     }
     public void StartInteract()
     {
-        List<ConsumableContainer> consumableContainers = m_Inventory.GetListOfItems().Select(cc => (ConsumableContainer)cc).ToList();
+        var consumableContainers = m_Inventory.GetListOfItems().Select(item => item.GetComponent<ConsumableContainer>()).Where(item => item != null).ToList();
         if (!consumableContainers.Where(cc => !cc.GetConsumableData().Contains(m_Consumable.GetConsumableData())).ToList().Any()) return;
         m_Interacting = true;
         OnStartInteract.Invoke();
@@ -46,9 +46,8 @@ public class AddConsumableOnInteract : MonoBehaviour
     public void OnInteract()
     {
         if (!m_Interacting) return;
-        List<ConsumableContainer> consumableContainers = m_Inventory.GetListOfItems().Select(cc => (ConsumableContainer)cc).ToList();
-        consumableContainers = consumableContainers.Where(cc => !cc.GetConsumableData().Contains(m_Consumable.GetConsumableData())).ToList();
-        foreach (ConsumableContainer consumableContainer in consumableContainers)
+        var consumableContainers = m_Inventory.GetListOfItems().Select(item => item.GetComponent<ConsumableContainer>()).Where(item => !item.GetConsumableData().Contains(m_Consumable.GetConsumableData())).ToList();
+        foreach (var consumableContainer in consumableContainers)
         {
             consumableContainer.AddItem(Instantiate(m_Consumable, consumableContainer.gameObject.transform.position, consumableContainer.gameObject.transform.rotation));
         }

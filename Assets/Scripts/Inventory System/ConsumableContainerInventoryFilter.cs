@@ -1,17 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 [RequireComponent(typeof(Inventory))]
 public class ConsumableContainerInventoryFilter : MonoBehaviour
 {
-    private void Awake()
+    Inventory m_Inventory;
+    private void OnEnable()
     {
-        Inventory inventory = GetComponent<Inventory>();
-        inventory.AddFilter(CanHoldObjectType);
+        m_Inventory = GetComponent<Inventory>();
+        m_Inventory?.AddFilter(CanHoldObjectType);
     }
     public bool CanHoldObjectType(PickupableObject pObject)
     {
-        ConsumableContainer c = pObject as ConsumableContainer;
+        ConsumableContainer c = pObject.GetComponent<ConsumableContainer>();
         if (c == null)
         {
             return false;
@@ -21,5 +23,14 @@ public class ConsumableContainerInventoryFilter : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    private void OnDisable()
+    {
+        m_Inventory?.RemoveFilter(CanHoldObjectType);
+    }
+    private void OnDestroy()
+    {
+        m_Inventory?.RemoveFilter(CanHoldObjectType);
     }
 }

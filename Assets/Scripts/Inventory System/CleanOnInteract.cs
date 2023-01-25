@@ -13,7 +13,6 @@ public class CleanOnInteract : MonoBehaviour
     [SerializeField] private UnityEvent OnStartClean;
     [SerializeField] private UnityEvent OnStopClean;
     private Inventory m_Inventory;
-    private bool m_Interacting = false;
 
     private void Awake()
     {
@@ -25,24 +24,21 @@ public class CleanOnInteract : MonoBehaviour
     }
     public void StartInteract()
     {
-        List<ConsumableContainer> consumableContainers = m_Inventory.GetListOfItems().Select(cc => (ConsumableContainer)cc).ToList();
+        var consumableContainers = m_Inventory.GetListOfItems().Select(item => item.GetComponent<ConsumableContainer>()).Where(item => item != null).ToList();
         if (!consumableContainers.Any()) return;
         if (!consumableContainers.Where(cc => !cc.IsClearAndClean()).ToList().Any()) return;
-        m_Interacting = true;
         OnStartClean.Invoke();
     }
     public void CancelInteract()
     {
-        m_Interacting = false;
         OnStopClean.Invoke();
     }
     public void OnInteract()
     {
-        List<PickupableObject> items = m_Inventory.GetListOfItems();
-        foreach (var item in items)
+        var consumableContainers = m_Inventory.GetListOfItems().Select(item => item.GetComponent<ConsumableContainer>()).Where(item => item != null).ToList();
+        foreach (var consumableContainer in consumableContainers)
         {
-            ConsumableContainer container = item as ConsumableContainer;
-            container.Clean();
+            consumableContainer.Clean();
         }
         OnStopClean.Invoke();
     }

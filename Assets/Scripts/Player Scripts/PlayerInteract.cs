@@ -53,7 +53,7 @@ public class PlayerInteract : MonoBehaviour
                 if (m_numFound <= 0) return;
                 Inventory itemInventory = GetClosestInventory();
                 if (itemInventory == null) return;
-                bool placed = itemInventory.PlaceItem(m_HeldObject);
+                bool placed = itemInventory.TryPlaceItem(m_HeldObject);
                 if (placed)
                 {
                     m_HeldObject = null;

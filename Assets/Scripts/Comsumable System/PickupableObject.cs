@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PickupableObject: MonoBehaviour
+public class PickupableObject: MonoBehaviour
 {
-    public abstract PickupableObject Pickup();
-    public abstract PickupableObject Place();
-
-    internal ConsumableContainer ToList()
+    public PickupableObject Pickup()
     {
-        throw new NotImplementedException();
+        return this;
+    }
+    public PickupableObject Place()
+    {
+        return this;
     }
 }

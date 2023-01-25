@@ -16,3 +16,4 @@ MonoBehaviour:
     type: 3}
   m_ConsumedModelPrefab: {fileID: 2544046118552527784, guid: 946bbafb7082ec94a810247c961134f3,
     type: 3}
+  m_ConsumableImage: {fileID: 21300000, guid: d8a2817453310e04c84594f4b5f7173c, type: 3}

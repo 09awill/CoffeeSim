@@ -41,7 +41,8 @@ public class TableManager : MonoBehaviour
     public Table GetTable()
     {
         var free = m_Tables.Where(t => !t.IsFull());
-        return free.Any() ? free.ElementAt(Random.Range(0, m_Tables.Count)) : null;
+        Table table = free.Any() ? free.ElementAt(Random.Range(0, free.Count())) : null;
+        return table; //free.Any() ? free.ElementAt(Random.Range(0, m_Tables.Count)) : null;
     }
     public Transform GetExit()
     {

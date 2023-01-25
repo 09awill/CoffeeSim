@@ -2,17 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 /// <summary>
 /// Inventory script allows user to place any object
 /// </summary>
 public class Inventory: MonoBehaviour
 {
-    [SerializeField] protected Transform[] m_ModelLocations;
-    protected List<PickupableObject> m_HeldItems = new List<PickupableObject>();
+    public Action OnInventoryItemAdded;
+    public Action OnInventoryItemRemoved;
+    public Action OnInventoryFilterUpdate;
 
+    [SerializeField] private Transform[] m_ModelLocations;
+    private List<PickupableObject> m_HeldItems = new List<PickupableObject>();
     private delegate bool ItemFilter(PickupableObject pObject);
     private List<ItemFilter> m_Filters = new List<ItemFilter>();
+
+    //This allows inventorys chain together
+    private Inventory m_ParentInventory = null;
 
     /// <summary>
     /// Adds Inventory Filter to delegate list
@@ -22,8 +29,36 @@ public class Inventory: MonoBehaviour
     {
         ItemFilter filter = new ItemFilter(pMethod);
         m_Filters.Add(filter);
+        OnInventoryFilterUpdate?.Invoke();
     }
-    public bool PlaceItem(PickupableObject pObject)
+    public void UpdateFilters()
+    {
+        OnInventoryFilterUpdate?.Invoke();
+    }
+    public void RemoveFilter(Func<PickupableObject, bool> pMethod)
+    {
+        m_Filters.RemoveAll(filter => filter.Method.Equals(pMethod));
+    }
+    
+    public void SetParent(Inventory pInventory)
+    {
+        m_ParentInventory = pInventory;
+    }
+
+    public Inventory GetParentInventory()
+    {
+        return m_ParentInventory;
+    }
+
+    public bool TryPlaceItem(PickupableObject pObject)
+    {
+        if (!CanHoldItem(pObject)) return false;
+        m_HeldItems.Add(pObject);
+        RefreshModel();
+        OnInventoryItemAdded?.Invoke();
+        return true;
+    }
+    public bool CanHoldItem(PickupableObject pObject)
     {
         if (m_HeldItems.Count >= m_ModelLocations.Length) return false;
         if (pObject == null) return false;
@@ -32,16 +67,15 @@ public class Inventory: MonoBehaviour
             bool fitsFilters = m_Filters.Where(filter => filter.Invoke(pObject) == true).Any();
             if (!fitsFilters) return false;
         }
-        m_HeldItems.Add(pObject);
-        RefreshModel();
         return true;
     }
-    public PickupableObject PickupItem()
+    public PickupableObject PickupItem(int pAtIndex = 0)
     {
-        if (m_HeldItems.Count == 0) return null;
-        PickupableObject item = m_HeldItems[0];
-        m_HeldItems.RemoveAt(0);
+        if (m_HeldItems.Count == 0 || m_HeldItems.Count - 1 < pAtIndex) return null;
+        PickupableObject item = m_HeldItems[pAtIndex];
+        m_HeldItems.RemoveAt(pAtIndex);
         RefreshModel();
+        OnInventoryItemRemoved?.Invoke();
         return item;
     }
     public List<PickupableObject> GetListOfItems()
