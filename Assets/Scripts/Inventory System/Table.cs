@@ -4,14 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
 /// <summary>
-/// Table script controls the state of the table, which chairs are full and which NPC to give consumables to
-/// Might be an idea to seperate Inventory script but would require a rethink around accessing held items on update.
+/// Table script controls the state of the table, which places are full
 /// </summary>
-public class Table : Inventory 
+public class Table : MonoBehaviour 
 {
-    [SerializeField] private Chair[] m_Chairs;
+    [SerializeField] private NPCEatingPlace[] m_Places;
+
+    private void OnValidate()
+    {
+        if (m_Places != null && m_Places.Length >= 0) return;
+        Debug.LogWarning($"[{gameObject.name}] : Table script had no NPCEatingPlaces set, Searching for places in children...");
+        m_Places = GetComponentsInChildren<NPCEatingPlace>();
+    }
     private void Awake()
     {
         TableManager.Instance.AddTable(this);
@@ -19,81 +26,14 @@ public class Table : Inventory
 
     public bool IsFull()
     {
-        bool isFull = true;
-        foreach (Chair c in m_Chairs)
-        {
-            if (c.Available) isFull = false;
-        }
-        return isFull;
+        return m_Places.Where(place => !place.IsAvailable()).Any();
     }
 
-    public Transform GetFreeChair(NPCController pNPC)
+    public Transform SeatNPC(NPCController pNPC)
     {
-        Transform chair = null;
-        while (chair == null)
-        {
-            Chair option = m_Chairs[Random.Range(0, m_Chairs.Length)];
-            if (!option.Available) continue;
-            chair = option.Transform;
-            option.Available = false;
-            option.NPC = pNPC;
-        }
-
-        return chair;
-    }
-    private ConsumableContainer GetFirstConsumableContainerPlaced()
-    {        
-        foreach (PickupableObject obj in m_HeldItems)
-        {
-            ConsumableContainer consumableContainer = obj as ConsumableContainer;
-            if(consumableContainer != null) return consumableContainer;
-        }
-        return null;
-    }
-
-    private void Update()
-    {
-        for (int i = 0; i < m_Chairs.Length; i++)
-        {
-            if (m_Chairs[i].NPC && m_Chairs[i].NPC.GetIsOrdering())
-            {
-                if (m_HeldItems.Count > 0)
-                {
-                    if(!m_Chairs[i].GiveOrder(GetFirstConsumableContainerPlaced())) continue;
-                    m_HeldItems.RemoveAt(0);
-                }
-            } else if(m_Chairs[i].NPC && m_Chairs[i].NPC.GetFinished())
-            {
-                m_HeldItems.Add(m_Chairs[i].TakePlate());
-                ConsumableContainer consumable = m_HeldItems[m_HeldItems.Count - 1] as ConsumableContainer;
-                consumable.Consume();
-                m_Chairs[i].ClearUpSeat();
-            }
-        }
-    }
-    [Serializable]
-    class Chair
-    {
-        public bool Available;
-        public Transform Transform;
-        public NPCController NPC;
-        public ConsumableContainer Order;
-        public void ClearUpSeat()
-        {
-            Available = true;
-            NPC = null;
-        }
-        public PickupableObject TakePlate()
-        {
-            PickupableObject obj = Order;
-            Order = null;
-            return obj;
-        }
-        public bool GiveOrder(ConsumableContainer pOrder)
-        {
-            if (!NPC.GiveOrder(pOrder)) return false;
-            Order = pOrder;
-            return true;
-        }
+        if (m_Places.Length <= 0) return null;
+        var freePlaces = m_Places.Where(place => place.IsAvailable()).ToList();
+        Transform t = freePlaces.Any() ? freePlaces.ElementAt(Random.Range(0, freePlaces.Count)).SeatNPC(pNPC) : null;
+        return t; // freePlaces.Any() ? freePlaces.ElementAt(Random.Range(0, freePlaces.Count)).SeatNPC(pNPC) : null;
     }
 }

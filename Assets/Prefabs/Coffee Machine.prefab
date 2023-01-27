@@ -4950,9 +4950,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1782838444180838795}
   - component: {fileID: 1782838444180838788}
-  - component: {fileID: 1782838444180838789}
   - component: {fileID: 1782838444180838790}
   - component: {fileID: 8118422051086043718}
+  - component: {fileID: 2312643984652041272}
+  - component: {fileID: 1782838444180838789}
+  - component: {fileID: 132327452198212089}
   m_Layer: 6
   m_Name: Coffee Machine
   m_TagString: Untagged
@@ -4992,66 +4994,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 2.2
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1782838444180838789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1782838444180838794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b9a4da8a150c544fb6ce9ddab5f3082, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_InteractTime: 2
-  m_OnInteracting:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1782838443499104441}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_OnInteractCancelled:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1782838443499104441}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Stop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_OnInteracted:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1782838443499104441}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Stop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_Coffee: {fileID: 3585916164204467866, guid: 7fa54efaf0fdd9c4cbe47027178bb6bb,
-    type: 3}
 --- !u!54 &1782838444180838790
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5082,6 +5024,75 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ModelLocations:
   - {fileID: 1782838442665450415}
+--- !u!114 &2312643984652041272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782838444180838794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aae34544f36db044191ebfbd0fed123f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_InteractTime: 5
+--- !u!114 &1782838444180838789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782838444180838794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a4da8a150c544fb6ce9ddab5f3082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnStartInteract:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1782838443499104441}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnStopInteract:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1782838443499104441}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_Consumable: {fileID: 3585916164204467866, guid: 7fa54efaf0fdd9c4cbe47027178bb6bb,
+    type: 3}
+--- !u!114 &132327452198212089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782838444180838794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76304d088a188c74794cf049624cf587, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3933145359022219992
 PrefabInstance:
   m_ObjectHideFlags: 0

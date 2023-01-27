@@ -4920,8 +4920,9 @@ GameObject:
   - component: {fileID: 6894566757313153347}
   - component: {fileID: 6894566757313153350}
   - component: {fileID: 6894566757313153349}
-  - component: {fileID: 6894566757313153351}
   - component: {fileID: 1236474118439748464}
+  - component: {fileID: 3612607240694493740}
+  - component: {fileID: 6894566757313153351}
   m_Layer: 6
   m_Name: Sink
   m_TagString: Untagged
@@ -4977,64 +4978,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &6894566757313153351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6894566757313153346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4a6f3b674acaca409c70e443b6fe24e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_InteractTime: 3
-  m_OnInteracting:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6894566756828217003}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_OnInteractCancelled:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6894566756828217003}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Stop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_OnInteracted:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6894566756828217003}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Stop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1236474118439748464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5049,6 +4992,61 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ModelLocations:
   - {fileID: 6894566757832874744}
+--- !u!114 &3612607240694493740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6894566757313153346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aae34544f36db044191ebfbd0fed123f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_InteractTime: 5
+--- !u!114 &6894566757313153351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6894566757313153346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4a6f3b674acaca409c70e443b6fe24e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnStartClean:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6894566756828217003}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnStopClean:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6894566756828217003}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6894566757832874743
 GameObject:
   m_ObjectHideFlags: 0

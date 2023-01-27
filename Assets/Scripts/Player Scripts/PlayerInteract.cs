@@ -15,17 +15,9 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private bool m_ShowDebug = false;
     [SerializeField] private float m_InteractionPointRadius = 0.5f;
     [SerializeField] private LayerMask m_InteractableMask;
-    [SerializeField] private Rigidbody m_RB;
-    [SerializeField] private Transform m_HeldItemLocation;
     private readonly Collider[] m_Colliders = new Collider[3];
     private int m_numFound;
     private Collider m_InteractingObject = null;
-    private PickupableObject m_HeldObject = null;
-
-    private void Awake()
-    {
-        if (!m_RB) m_RB = GetComponent<Rigidbody>();
-    }
 
     public void OnInteract(InputAction.CallbackContext pContext)
     {
@@ -35,39 +27,12 @@ public class PlayerInteract : MonoBehaviour
             var interactable = GetClosestInteractable();
             if (interactable == null) return;
             m_InteractingObject = interactable;
-            interactable.GetComponent<IInteractable>().StartInteract();
+            interactable.GetComponent<Interactable>().StartInteract();
         } else if (pContext.canceled)
         {
             if (m_InteractingObject == null) return;
-            m_InteractingObject.GetComponent<IInteractable>().StopInteract();
+            m_InteractingObject.GetComponent<Interactable>().StopInteract();
             m_InteractingObject = null;
-        }
-    }
-
-    public void OnPickup(InputAction.CallbackContext pContext)
-    {
-        if (pContext.performed)
-        {
-            if (m_HeldObject)
-            {
-                if (m_numFound <= 0) return;
-                Inventory itemInventory = GetClosestInventory();
-                if (itemInventory == null) return;
-                bool placed = itemInventory.PlaceItem(m_HeldObject);
-                if (placed)
-                {
-                    m_HeldObject = null;
-                }
-            }
-            else
-            {
-                if (m_numFound <= 0) return;
-                var pickupable = GetClosestInventory()?.PickupItem();
-                if (!pickupable) return;
-                m_HeldObject = pickupable;
-                m_HeldObject.transform.position = m_HeldItemLocation.position;
-                m_HeldObject.transform.parent = transform;
-            }
         }
     }
 
@@ -83,45 +48,32 @@ public class PlayerInteract : MonoBehaviour
     {
         m_numFound = Physics.OverlapSphereNonAlloc(transform.position, m_InteractionPointRadius, m_Colliders,
             m_InteractableMask);
-        if (m_InteractingObject && !m_Colliders.Contains(m_InteractingObject))
+        if (!m_InteractingObject) return;
+        for (int i = 0; i < m_numFound; i++)
         {
-            m_InteractingObject.GetComponent<IInteractable>().StopInteract();
-            m_InteractingObject = null;
-        }
-    }
-
-    private Inventory GetClosestInventory()
-    {
-        Inventory tMin = null;
-        float minDist = Mathf.Infinity;
-        Vector3 currentPos = transform.position;
-        foreach (Collider c in m_Colliders)
-        {
-            float dist = Vector3.Distance(c.gameObject.transform.position, currentPos);
-            if (dist < minDist)
+            if(m_InteractingObject == m_Colliders[i])
             {
-                Inventory item = c.gameObject.GetComponent<Inventory>();
-                if (item == null) continue;
-                tMin = item;
-                minDist = dist;
+                return;
             }
         }
-        return tMin;
+        m_InteractingObject.GetComponent<Interactable>().StopInteract();
+        m_InteractingObject = null;
     }
     private Collider GetClosestInteractable()
     {
         Collider tMin = null;
         float minDist = Mathf.Infinity;
         Vector3 currentPos = transform.position;
-        foreach (Collider c in m_Colliders)
+        for (int i = 0; i < m_numFound; i++)
         {
-            float dist = Vector3.Distance(c.gameObject.transform.position, currentPos);
-            if (dist < minDist)
+            Collider c = m_Colliders[i];
+            float SqDistanceToTarget = (c.gameObject.transform.position - currentPos).sqrMagnitude;
+            if (SqDistanceToTarget < minDist)
             {
-                IInteractable item = c.gameObject.GetComponent<IInteractable>();
+                Interactable item = c.gameObject.GetComponent<Interactable>();
                 if (item == null) continue;
                 tMin = c;
-                minDist = dist;
+                minDist = SqDistanceToTarget;
             }
         }
         return tMin;

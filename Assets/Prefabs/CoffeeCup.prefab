@@ -259,6 +259,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7555155105244506272}
   - component: {fileID: 6770249656386796008}
+  - component: {fileID: 5088943475206265695}
   m_Layer: 6
   m_Name: CoffeeCup
   m_TagString: Untagged
@@ -295,6 +296,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Consumables: []
+--- !u!114 &5088943475206265695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555155105244506279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede59d31c123ec547a8098612208261c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7555155105989992393
 GameObject:
   m_ObjectHideFlags: 0

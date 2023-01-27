@@ -9,12 +9,12 @@ using UnityEngine.Events;
 /// Basic interactable script, allows a user to interact and trigger events with a given interact time.
 /// </summary>
 
-public class BaseInteractable : MonoBehaviour, IInteractable 
+public class Interactable : MonoBehaviour
 {
-    [SerializeField] private float m_InteractTime = 10f;
-    [SerializeField] private UnityEvent m_OnInteracting;
-    [SerializeField] private UnityEvent m_OnInteractCancelled;
-    [SerializeField] private UnityEvent m_OnInteracted;
+    [SerializeField] public Action OnInteracting;
+    [SerializeField] public Action OnInteractCancelled;
+    [SerializeField] public Action OnInteracted;
+    [SerializeField] private float m_InteractTime = 5f;
     private Coroutine m_InteractingCoroutine = null;
 
     public void StartInteract()
@@ -22,13 +22,13 @@ public class BaseInteractable : MonoBehaviour, IInteractable
         if (!CanStartInteract()) return;
         if (m_InteractingCoroutine != null) StopCoroutine(m_InteractingCoroutine);
         m_InteractingCoroutine = StartCoroutine(Interacting());
-        m_OnInteracting.Invoke();
+        OnInteracting.Invoke();
     }
 
     public void StopInteract()
     {
         if(m_InteractingCoroutine != null) StopCoroutine(m_InteractingCoroutine);
-        m_OnInteractCancelled.Invoke();
+        OnInteractCancelled.Invoke();
     }
 
     public IEnumerator Interacting()
@@ -43,11 +43,15 @@ public class BaseInteractable : MonoBehaviour, IInteractable
         yield return null;
     }
 
-    public virtual void OnInteract()
+    public void OnInteract()
     {
-        m_OnInteracted.Invoke();
+        OnInteracted.Invoke();
     }
-    public virtual bool CanStartInteract()
+    /// <summary>
+    /// Gives option to add restrictions for interaction
+    /// </summary>
+    /// <returns></returns>
+    public bool CanStartInteract()
     {
         return true;
     }

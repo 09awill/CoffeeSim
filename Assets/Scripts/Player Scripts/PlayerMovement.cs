@@ -8,18 +8,12 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private Rigidbody m_RB;
     [SerializeField] private CharacterController m_CharacterController;
     [SerializeField] private float m_Speed = 5f;
     [SerializeField] private float m_TurnSmoothTime = 0.1f;
     private Vector2 m_Movement;
     private bool m_Interacting = false;
     private float m_TurnSmoothVelocity;
-    
-    private void Awake()
-    {
-        if (!m_RB) m_RB = GetComponent<Rigidbody>();
-    }
 
     public void OnInteracting(InputAction.CallbackContext pContext)
     {

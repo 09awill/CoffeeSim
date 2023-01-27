@@ -1,32 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 /// <summary>
 /// Base script for containing consumables, designed to be used for plates, cups etc.
 /// </summary>
-public class ConsumableContainer : PickupableObject
+public class ConsumableContainer: MonoBehaviour
 {
     public List<Consumable> m_Consumables = new List<Consumable>();
     private bool m_Dirty = false;
-    public override PickupableObject Pickup()
-    {
-        return this;
-    }
-    public override PickupableObject Place()
-    {
-        return this;
-    }
 
-    public bool AddItem(PickupableObject pObject)
+    public bool AddItem(Consumable pConsumable)
     {
-        Consumable consumable = pObject as Consumable;
-        if (consumable == null) return false;
-        if (m_Consumables.Contains(consumable)) return false;
-        m_Consumables.Add(consumable);
-        pObject.transform.position = transform.position;
-        pObject.transform.rotation = transform.rotation;
-        pObject.transform.parent = transform;
+        if (pConsumable == null) return false;
+        if (m_Consumables.Contains(pConsumable)) return false;
+        m_Consumables.Add(pConsumable);
+        pConsumable.transform.position = transform.position;
+        pConsumable.transform.rotation = transform.rotation;
+        pConsumable.transform.parent = transform;
         return true;
     }
     public List<SO_Consumable> GetConsumableData()

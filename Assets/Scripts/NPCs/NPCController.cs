@@ -8,26 +8,27 @@ using UnityEngine.AI;
 /// <summary>
 /// Script is too big, could potentially seperate into NPC movement controller and NPC order controller
 /// </summary>
+[RequireComponent(typeof(CharacterMovement))]
 public class NPCController : MonoBehaviour
 {
-    [SerializeField] private NavMeshAgent m_NavMeshAgent = null;
-    [SerializeField] private Transform m_TargetTransform;
+    public Action OnOrderChanged;
+    public Action OnEating;
+    public Action OnLeavingTable;
     [SerializeField] private float m_EatTime = 1f;
-    [SerializeField] private bool m_DrawDebug = false;
+    [SerializeField] private CharacterMovement m_CharacterMovement;
     private TableState m_TableState = TableState.NotAssignedTable;
     private Table m_TargetTable;
     private List<Consumable> m_CoffeeOrder = null;
+    private ConsumableContainer m_GivenOrder = null;
     private void Awake()
     {
-        if (!m_NavMeshAgent) m_NavMeshAgent = GetComponent<NavMeshAgent>();
+        m_CharacterMovement = GetComponent<CharacterMovement>();
     }
-
-    public void Initialise(Transform pTransform)
+    private void Start()
     {
-        m_TargetTransform = Instantiate(pTransform, pTransform.position, pTransform.rotation);
+        m_CharacterMovement.SetTargetPositionAndRot(transform.position, transform.rotation);
         StartCoroutine(GetPlace());
     }
-
     private IEnumerator GetPlace()
     {
         while (m_TableState != TableState.GettingToTable)
@@ -38,103 +39,80 @@ public class NPCController : MonoBehaviour
                 yield return new WaitForSeconds(1);
                 continue;
             }
-            Transform chair = m_TargetTable.GetFreeChair(this);
+            Transform chair = m_TargetTable.SeatNPC(this);
             if (chair == null)
             {
                 yield return new WaitForSeconds(1);
                 continue;
             }
-            m_TargetTransform.SetPositionAndRotation(chair.position, chair.rotation);
+            m_CharacterMovement.SetTargetPositionAndRot(chair.position, chair.rotation);
             m_TableState = TableState.GettingToTable;
+            m_CharacterMovement.OnArrivedAtDestination += ReachedTable;
         }
         yield return null;
     }
-    private void Update()
+
+    private void ReachedTable()
     {
-        if(m_NavMeshAgent.transform.position != m_TargetTransform.position) m_NavMeshAgent.destination = m_TargetTransform.position;
-        if (m_TableState == TableState.GettingToTable)
-        {
-            if (HasReachedDestination())
-            {
-                m_TableState = TableState.AtTable;
-                //transform.LookAt(transform.position + m_TargetTransform.forward);
-                StartCoroutine(RotateToFace());
-                StartCoroutine(GetOrderCoroutine());
-            }
-        }
-        if (m_TableState == TableState.FinishedAtTable)
-        {
-            if (HasReachedDestination())
-            {
-                m_TableState = TableState.NotAssignedTable;
-                gameObject.SetActive(false);
-            }
-        }
+        m_TableState = TableState.AtTable;
+        StartCoroutine(GetOrderCoroutine());
+        m_CharacterMovement.OnArrivedAtDestination -= ReachedTable;
     }
-    private IEnumerator RotateToFace()
+    private void ReachedExit()
     {
-        var targetRotation = Quaternion.LookRotation(m_TargetTransform.transform.position - transform.position);
-        while (!Quaternion.Equals(transform.rotation, targetRotation))
-        {
-            targetRotation = Quaternion.LookRotation((transform.position + m_TargetTransform.transform.forward) - transform.position);
-            // Smoothly rotate towards the target point.
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 2f * Time.deltaTime);
-            yield return null;
-        }
-        yield return null;
-    }
-    public bool HasReachedDestination()
-    {
-        if (!m_NavMeshAgent.pathPending)
-        {
-            if (m_NavMeshAgent.remainingDistance <= m_NavMeshAgent.stoppingDistance)
-            {
-                if (!m_NavMeshAgent.hasPath || m_NavMeshAgent.velocity.sqrMagnitude == 0f)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool GetIsOrdering()
-    {
-        return m_CoffeeOrder != null;
+        m_TableState = TableState.NotAssignedTable;
+        gameObject.SetActive(false);
+        m_CharacterMovement.OnArrivedAtDestination -= ReachedExit;
     }
 
     public bool GiveOrder(ConsumableContainer pOrder)
     {
-        if (pOrder.IsDirty()) return false;
-        List<SO_Consumable> consumableData = pOrder.GetConsumableData();
-        
-        if (m_CoffeeOrder.Count != consumableData.Count) return false;
-        foreach (Consumable c in m_CoffeeOrder)
-        {
-            if (!consumableData.Contains(c.GetConsumableData())) return false;
-        }
+        if (!CheckOrderIsCorrect(pOrder)) return false;
+        m_GivenOrder = pOrder;
         StartCoroutine(Eat());
         return true;
     }
-    private IEnumerator Eat()
+    public List<Consumable> GetOrder()
     {
-        yield return new WaitForSeconds(m_EatTime);
-        m_CoffeeOrder = null;
-        m_TableState = TableState.FinishedAtTable;
-        m_TargetTransform.position = TableManager.Instance.GetExit().position;
-    }
-    public bool GetFinished()
-    {
-        return m_TableState == TableState.FinishedAtTable;
+        return m_CoffeeOrder;
     }
     private IEnumerator GetOrderCoroutine()
     {
         yield return new WaitForSeconds(5);
         m_CoffeeOrder = OrderManager.GetOrder();
+        OnOrderChanged.Invoke();
         m_TableState = TableState.Eating;
         yield return null;
     }
+    public bool CheckOrderIsCorrect(ConsumableContainer pOrder)
+    {
+        if (m_CoffeeOrder == null) return false;
+        if (pOrder == null) return false;
+        if (pOrder.IsDirty()) return false;
+        List<SO_Consumable> consumableData = pOrder.GetConsumableData();
+        if (m_CoffeeOrder.Count != consumableData.Count) return false;
+        if (m_CoffeeOrder.Where(consumable => !consumableData.Contains(consumable.GetConsumableData())).Any())
+        {
+            return false;
+        }
+        return true;
+    }
+    private IEnumerator Eat()
+    {
+        OnEating.Invoke();
+        yield return new WaitForSeconds(m_EatTime);
+        m_GivenOrder.Consume();
+        m_GivenOrder = null;
+        m_CoffeeOrder = null;
+        OnOrderChanged.Invoke();
+        Transform exit = TableManager.Instance.GetExit();
+        m_CharacterMovement.SetTargetPositionAndRot(exit.position, exit.rotation);
+        m_TableState = TableState.FinishedAtTable;
+        m_CharacterMovement.OnArrivedAtDestination += ReachedExit;
+        OnLeavingTable.Invoke();
+    }
 
-    public enum TableState
+    private enum TableState
     {
         NotAssignedTable,
         GettingToTable,
@@ -142,12 +120,4 @@ public class NPCController : MonoBehaviour
         Eating,
         FinishedAtTable,
     };
-    private void OnDrawGizmos()
-    {
-        if(m_DrawDebug)Gizmos.DrawLine(transform.position, transform.position + m_TargetTransform.forward);
-    }
-    private void OnDestroy()
-    {
-        if(m_TargetTransform)Destroy(m_TargetTransform.gameObject);
-    }
 }
