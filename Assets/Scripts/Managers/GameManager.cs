@@ -66,7 +66,6 @@ public class GameManager : MonoBehaviour
             if(timer > (m_RoundTime/ m_NPCsInRound.Length) * m_NPCCounter)
             {
                 m_NPCsInRound[m_NPCCounter] = Instantiate(m_NPC, m_NPCSpawnLocation.position, m_NPCSpawnLocation.rotation);
-                m_NPCsInRound[m_NPCCounter].Initialise(m_NPCSpawnLocation);
                 m_NPCCounter++;
             }
             timer += Time.deltaTime;
