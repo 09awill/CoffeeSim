@@ -9,10 +9,8 @@ using Random = UnityEngine.Random;
 /// </summary>
 public class TableManager : MonoBehaviour
 {
-    [SerializeField] private Transform m_Exit;
+    #region Singleton
     private static TableManager m_Instance;
-    private List<Table> m_Tables = new List<Table>();
-
     public static TableManager Instance {
         get
         {
@@ -37,12 +35,16 @@ public class TableManager : MonoBehaviour
     {
         Instance = this;
     }
+    #endregion
+
+    [SerializeField] private Transform m_Exit;
+    private List<Table> m_Tables = new List<Table>();
+
 
     public Table GetTable()
     {
         var free = m_Tables.Where(t => !t.IsFull());
-        Table table = free.Any() ? free.ElementAt(Random.Range(0, free.Count())) : null;
-        return table; //free.Any() ? free.ElementAt(Random.Range(0, m_Tables.Count)) : null;
+        return free.Any() ? free.ElementAt(Random.Range(0, free.Count())) : null;
     }
     public Transform GetExit()
     {

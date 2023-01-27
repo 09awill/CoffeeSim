@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 /// <summary>
 /// Controls state of game, Manages the spawning and deletion of NPC's and the round difficulty
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    #region Singleton
     private static GameManager m_Instance;
     public static GameManager Instance
     {
@@ -33,7 +35,7 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
     }
-
+    #endregion
 
     [SerializeField] private NPCController m_NPC;
     [SerializeField] private Transform m_NPCSpawnLocation;
@@ -79,12 +81,7 @@ public class GameManager : MonoBehaviour
         bool allFinished = false;
         while (!allFinished)
         {
-            bool tempAllFinished = true;
-            foreach (NPCController controller in m_NPCsInRound)
-            {
-                if (controller.isActiveAndEnabled) tempAllFinished = false;
-            }
-            allFinished = tempAllFinished;
+            allFinished = !m_NPCsInRound.Where(npc => npc.isActiveAndEnabled).Any();
             yield return new WaitForSeconds(1);
         }
         foreach(NPCController controller in m_NPCsInRound)
