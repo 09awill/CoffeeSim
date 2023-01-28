@@ -4955,6 +4955,7 @@ GameObject:
   - component: {fileID: 2312643984652041272}
   - component: {fileID: 1782838444180838789}
   - component: {fileID: 132327452198212089}
+  - component: {fileID: 2190235715027847927}
   m_Layer: 6
   m_Name: Coffee Machine
   m_TagString: Untagged
@@ -5093,6 +5094,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76304d088a188c74794cf049624cf587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2190235715027847927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782838444180838794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87f572f5f772c9c41a101d779ed77673, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Inventory: {fileID: 8118422051086043718}
+  m_Renderer: {fileID: 2401759440062414428}
+  m_EmissiveColour: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1001 &3933145359022219992
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5162,6 +5178,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 920c8ccb3a77c594d883347ad7d3704c, type: 3}
+--- !u!23 &2401759440062414428 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 920c8ccb3a77c594d883347ad7d3704c,
+    type: 3}
+  m_PrefabInstance: {fileID: 3933145359022219992}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3539811306783868211 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 920c8ccb3a77c594d883347ad7d3704c,
