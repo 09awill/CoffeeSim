@@ -12,13 +12,16 @@ public class Inventory: MonoBehaviour
     public Action OnInventoryItemAdded;
     public Action OnInventoryItemRemoved;
     public Action OnInventoryFilterUpdate;
+    public Action OnInventoryTargeted;
+    public Action OnInventoryUnTargeted;
+
 
     [SerializeField] private Transform[] m_ModelLocations;
     private List<PickupableObject> m_HeldItems = new List<PickupableObject>();
     private delegate bool ItemFilter(PickupableObject pObject);
     private List<ItemFilter> m_Filters = new List<ItemFilter>();
 
-    //This allows inventorys chain together
+    //This allows inventories to chain together
     private Inventory m_ParentInventory = null;
 
     /// <summary>
@@ -30,6 +33,32 @@ public class Inventory: MonoBehaviour
         ItemFilter filter = new ItemFilter(pMethod);
         m_Filters.Add(filter);
         OnInventoryFilterUpdate?.Invoke();
+    }
+    public void SetAsTarget(PickupableObject pObject = null)
+    {
+        if(!pObject)
+        {
+            if (m_HeldItems.Count > 0)
+            {
+                OnInventoryTargeted?.Invoke(); 
+            } else
+            {
+                OnInventoryUnTargeted?.Invoke();
+            }
+        } else
+        {
+            if (CanHoldItem(pObject))
+            {
+                OnInventoryTargeted?.Invoke();
+            } else
+            {
+                OnInventoryUnTargeted?.Invoke();
+            }
+        }
+    }
+    public void RemoveAsTarget()
+    {
+        OnInventoryUnTargeted.Invoke();
     }
     public void UpdateFilters()
     {

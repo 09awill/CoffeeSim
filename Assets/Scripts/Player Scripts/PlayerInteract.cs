@@ -10,28 +10,27 @@ using UnityEngine.InputSystem;
 /// Player interact script allows user to pick up and interact with objects
 /// Runs physics overlaps with nearby objects to detect what to interact or pickup when input is pressed.
 /// </summary>
+[RequireComponent(typeof(PlayerInteractableDetector))]
 public class PlayerInteract : MonoBehaviour
 {
-    [SerializeField] private bool m_ShowDebug = false;
-    [SerializeField] private float m_InteractionPointRadius = 0.5f;
-    [SerializeField] private LayerMask m_InteractableMask;
-    private readonly Collider[] m_Colliders = new Collider[3];
-    private int m_numFound;
-    private Collider m_InteractingObject = null;
-
+    private PlayerInteractableDetector m_Detector;
+    private Interactable m_InteractingObject = null;
+    private void Awake()
+    {
+        m_Detector = GetComponent<PlayerInteractableDetector>();
+    }
     public void OnInteract(InputAction.CallbackContext pContext)
     {
         if (pContext.performed)
         {
-            if (m_numFound <= 0) return;
             var interactable = GetClosestInteractable();
             if (interactable == null) return;
             m_InteractingObject = interactable;
-            interactable.GetComponent<Interactable>().StartInteract();
+            interactable.StartInteract();
         } else if (pContext.canceled)
         {
             if (m_InteractingObject == null) return;
-            m_InteractingObject.GetComponent<Interactable>().StopInteract();
+            m_InteractingObject.StopInteract();
             m_InteractingObject = null;
         }
     }
@@ -46,44 +45,34 @@ public class PlayerInteract : MonoBehaviour
 
     private void Update()
     {
-        m_numFound = Physics.OverlapSphereNonAlloc(transform.position, m_InteractionPointRadius, m_Colliders,
-            m_InteractableMask);
         if (!m_InteractingObject) return;
-        for (int i = 0; i < m_numFound; i++)
+        GameObject[] interactables = m_Detector.getInteractables();
+        if (interactables != null && interactables.Contains(m_InteractingObject.gameObject))
         {
-            if(m_InteractingObject == m_Colliders[i])
-            {
-                return;
-            }
+            return;
         }
-        m_InteractingObject.GetComponent<Interactable>().StopInteract();
+        m_InteractingObject.StopInteract();
         m_InteractingObject = null;
     }
-    private Collider GetClosestInteractable()
+    private Interactable GetClosestInteractable()
     {
-        Collider tMin = null;
+        Interactable tMin = null;
         float minDist = Mathf.Infinity;
         Vector3 currentPos = transform.position;
-        for (int i = 0; i < m_numFound; i++)
+        GameObject[] interactables = m_Detector.getInteractables();
+        if (interactables == null) return null;
+        foreach (GameObject interactable in interactables)
         {
-            Collider c = m_Colliders[i];
-            float SqDistanceToTarget = (c.gameObject.transform.position - currentPos).sqrMagnitude;
+            float SqDistanceToTarget = (interactable.transform.position - currentPos).sqrMagnitude;
             if (SqDistanceToTarget < minDist)
             {
-                Interactable item = c.gameObject.GetComponent<Interactable>();
+                Interactable item = interactable.GetComponent<Interactable>();
                 if (item == null) continue;
-                tMin = c;
+                tMin = item;
                 minDist = SqDistanceToTarget;
             }
         }
-        return tMin;
+        return tMin.GetComponent<Interactable>();
     }
 
-    private void OnDrawGizmos()
-    {
-        if (m_ShowDebug)
-        {
-            Gizmos.DrawSphere(transform.position, m_InteractionPointRadius);   
-        }
-    }
 }

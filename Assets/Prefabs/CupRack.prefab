@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 6773079109324651935}
   - component: {fileID: 191863340824630853}
   - component: {fileID: 7972847286580686130}
+  - component: {fileID: 500154086777202139}
   m_Layer: 6
   m_Name: CupRack
   m_TagString: Untagged
@@ -239,6 +240,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76304d088a188c74794cf049624cf587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &500154086777202139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575019245991185829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87f572f5f772c9c41a101d779ed77673, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Inventory: {fileID: 6773079109324651935}
+  m_Renderer: {fileID: 336539294770279409}
+  m_EmissiveColour: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &575019246102304033
 GameObject:
   m_ObjectHideFlags: 0
@@ -436,6 +452,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e3f72e5011449f14b9539d712f6feb1d, type: 3}
+--- !u!23 &336539294770279409 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: e3f72e5011449f14b9539d712f6feb1d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1398988999889825653}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1504356654678919326 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e3f72e5011449f14b9539d712f6feb1d,
