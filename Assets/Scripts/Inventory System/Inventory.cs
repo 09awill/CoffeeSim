@@ -21,7 +21,7 @@ public class Inventory: MonoBehaviour
     private delegate bool ItemFilter(PickupableObject pObject);
     private List<ItemFilter> m_Filters = new List<ItemFilter>();
 
-    //This allows inventorys chain together
+    //This allows inventories to chain together
     private Inventory m_ParentInventory = null;
 
     /// <summary>
